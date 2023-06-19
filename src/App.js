@@ -42,7 +42,7 @@ function App() {
       <Form>
         <Form.Group controlId="videoUrl">
           <Form.Label>Video URL</Form.Label>
-          <Form.Control type="text" placeholder="Enter video URL" value={videoUrl} onChange={setVideoUrl} />
+          <Form.Control type="text" placeholder="Enter video URL" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} />
         </Form.Group>
 
         <Form.Group controlId="format">
