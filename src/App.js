@@ -68,7 +68,7 @@ function App() {
       <Button variant="success" onClick={handleDownloadVideo}>Download</Button>
        
       {videoInfo && (
-        < VideoCard
+        <VideoCard
         title={videoInfo.title}
         author={videoInfo.author}
         thumbnail_url={videoInfo.thumbnail_url}
