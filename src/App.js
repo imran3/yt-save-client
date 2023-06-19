@@ -76,12 +76,7 @@ function App() {
         </Col>
       </Row>
       {videoInfo && (
-        <div>
-          <h2>Video Info</h2>
-          <p>Title: {videoInfo.title}</p>
-          <p>Author: {videoInfo.author}</p>
-          {/* Display other video info */}
-        </div>
+        JSON.stringify(videoInfo)
       )}
     </Container>
   );
