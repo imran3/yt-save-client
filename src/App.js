@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Row, Col, ButtonGroup } from 'react-bootstrap';
+import VideoCard from './VideoCard';
 
 function App() {
   const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/watch?v=oyZtLzXyVwA');
@@ -63,22 +64,22 @@ function App() {
         </Form.Group>
       </Form>
 
-      <Row className="mt-3">
-        <Col>
-          <Button variant="primary" onClick={handleGetVideoInfo}>
-            Get Video Info
-          </Button>
-        </Col>
-        <Col>
-          <Button variant="success" onClick={handleDownloadVideo}>
-            Download Video
-          </Button>
-        </Col>
-      </Row>
+      <Button variant="primary" onClick={handleGetVideoInfo}>Get Info</Button>
+      <Button variant="success" onClick={handleDownloadVideo}>Download</Button>
+       
       {videoInfo && (
-        JSON.stringify(videoInfo)
+        < VideoCard
+        title={videoInfo.title}
+        author={videoInfo.author}
+        thumbnail_url={videoInfo.thumbnail_url}
+        length={videoInfo.length}
+        views={videoInfo.views}
+      />
       )}
+      
     </Container>
+
+    
   );
 }
 
