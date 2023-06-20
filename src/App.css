@@ -1,0 +1,26 @@
+:root {
+    --primary-color: #FF6B6B;
+    --secondary-color: #FFD166;
+    --text-color: #FFFFFF;
+    --heading-color: #FFFFFF;
+    --accent-color-1: #06D6A0;
+    --accent-color-2: #118AB2;
+    --background-color: #1B1B1E;
+  }
+
+#root {
+    background-color: var(--accent-color-1);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Align content horizontally */
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
