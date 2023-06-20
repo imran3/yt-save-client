@@ -1,66 +1,11 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button, Image, Table } from 'react-bootstrap';
-import './App.css';
-
-const DownloadOptionsTable = ({ streams }) => {
-  const videoStreams = streams.filter((stream) => stream?.mime_type.startsWith('video'));
-  const audioStreams = streams.filter((stream) => stream?.mime_type.startsWith('audio'));
-
-  return (
-    <div>
-      <h3>Video</h3>
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Resolution</th>
-            <th>Mime/Type</th>
-            <th>Download</th>
-          </tr>
-        </thead>
-        <tbody>
-          {videoStreams.map((stream) => (
-            <tr key={stream.itag}>
-              <td>{stream.resolution}</td>
-              <td>{stream.mime_type}</td>
-              <td>
-                <Button variant="primary" href={stream.url} download>
-                  Download
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <h3>Audio</h3>
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Mime/Type</th>
-            <th>Download</th>
-          </tr>
-        </thead>
-        <tbody>
-          {audioStreams.map((stream) => (
-            <tr key={stream.itag}>
-              <td>{stream.mime_type}</td>
-              <td>
-                <Button variant="primary" href={stream.url} download>
-                  Download
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
-  );
-};
-
-
+import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { DownloadOptionsTable } from './components/DownloadOptionsTable';
+import { Footer } from './components/Footer';
+import { Tutorial } from './components/Tutorial';
 
 const App = () => {
-  const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/watch?v=oyZtLzXyVwA');
+  const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/watch?v=-EY97tZAkNY');
   const [videoInfo, setVideoInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const API_URL = 'https://ytsave-f5eac5b627ec.herokuapp.com'
@@ -69,23 +14,14 @@ const App = () => {
     setVideoUrl(event.target.value);
   };
 
-  function formatLength(length) {
-    const hours = Math.floor(length / 3600);
-    const minutes = Math.floor((length % 3600) / 60);
-    const seconds = length % 60;
+  function formatDuration(duration) {
+    const hours = Math.floor(duration / 3600);
+    const minutes = Math.floor((duration % 3600) / 60);
+    const seconds = duration % 60;
   
-    let formattedLength = '';
-    if (hours > 0) {
-      formattedLength += `${hours} hour${hours > 1 ? 's' : ''} `;
-    }
-    if (minutes > 0) {
-      formattedLength += `${minutes} minute${minutes > 1 ? 's' : ''} `;
-    }
-    if (seconds > 0) {
-      formattedLength += `${seconds} second${seconds > 1 ? 's' : ''}`;
-    }
-  
-    return formattedLength.trim();
+    let formatDuration = `${hours ? hours + ':' : ''}${minutes ? minutes + ':' : ''}${seconds ? seconds : ''}`
+   
+    return formatDuration.trim();
   }
 
   const handleGetVideoInfo = () => {
@@ -103,23 +39,40 @@ const App = () => {
       });
   };
 
+  const handleDownlod = (steamInfo) => {
+    console.log("Download this: ", steamInfo)
+  }
+
+  const handleDownloadVideo = async (e) => {
+    e.preventDefault();
+
+    const selectedFormat = "audio"
+    try {
+      const response = await fetch(`${API_URL}/save?url=${videoUrl}&format=${selectedFormat}`);
+      const blob = await response.blob();
+
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', `video.${selectedFormat === 'video' ? 'mp4' : 'mp3'}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Container>
-      <header className="text-center my-4">
-        <img
-          src="logo.png"
-          alt="Logo"
-          style={{ cursor: 'pointer' }}
-          onClick={() => window.location.reload()}
-        />
-      </header>
-      <main>
         <Row className="justify-content-center mb-4">
           <Col xs={12} md={12} lg={8}>
-            <Card>
-              <Card.Body>
-                <h2 className="text-center mb-4">YouTube Video Downloader Online</h2>
-                <Form>
+            <Card className='text-center '>
+              <Card.Header>
+                <h1 className="text-center">YouTube Video Downloader Online</h1>
+              </Card.Header>
+              <Card.Body> 
+                <Form onSubmit={handleGetVideoInfo}>
                   <Form.Group as={Row} controlId="formUrl" xs={12}>
                     <Col xs={12} md={8} lg={8}>
                       <Form.Control
@@ -144,69 +97,43 @@ const App = () => {
               </Card.Body>
             </Card>
           </Col>
-        </Row>
-        {videoInfo && (
+        </Row> 
+
+      {videoInfo && (
           <Row className="justify-content-center mb-4">
             <Col xs={12} md={12} lg={8}>
               <Card>
+                <Card.Img src={videoInfo.thumbnail_url}></Card.Img>
                 <Card.Body>
-                  <Row>
-                    <Col xs={12} md={12} lg={12}>
-                      <Image src={videoInfo.thumbnail_url} alt="Video Thumbnail" fluid />
-                    </Col>
-                    <Col xs={12} md={12}>
                       <h3>{videoInfo.title}</h3>
-                      
-                    </Col>
-                  </Row>
-                  <Row>
-                  <Col xs={12} md={12}>
                       <h4>By: {videoInfo.author}</h4>
-                      <p><strong>Duration</strong>: {formatLength(videoInfo.length)}  <strong>Views</strong>: {videoInfo.views}</p>
-                    </Col>
-                  </Row>
+                      <p><strong>Duration</strong>: {formatDuration(videoInfo.length)}  <strong>Views</strong>: {videoInfo.views}</p>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
         )}
-        {
+
+      {
           videoInfo && (
           <Row className="justify-content-center mb-4">
             <Col xs={12} md={12} lg={8}>
               <Card>
                 <Card.Body>
                   <h3 className="download-options-title">Download Options</h3>
-                  <DownloadOptionsTable streams={videoInfo.streams}/>
+                  <DownloadOptionsTable streams={videoInfo.streams} downloadHanlder = {handleDownlod}/>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
           )
         }
-      </main>
-
       <Row className="justify-content-center mb-4">
-        <Col xs={12} md={12} lg={8}>
-          <Card>
-            <Card.Body>
-            <div className="tutorial">
-              <h3 className="tutorial-title">How to Use</h3>
-              <ol className="tutorial-steps">
-                <li>Paste or type the YouTube video URL into the input field above.</li>
-                <li>Click the "Start" button to view the video information and available download options.</li>
-                <li>Select the desired video resolution from the download options table.</li>
-                <li>Click the "Download" button next to the chosen resolution.</li>
-              </ol>
-            </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
-      <footer className="footer text-center mt-4">
-        <p>&copy; 2023 Your App. All rights reserved.</p>
-      </footer>
+          <Col xs={12} md={12} lg={8}>
+            <Tutorial/>
+            <Footer/>
+          </Col>
+        </Row>
     </Container>
   );
 };
