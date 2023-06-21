@@ -43,7 +43,7 @@ const DownloadOptionsTable = ({ streams, downloadHanlder}) => {
               <tr key={index}>
                 <td>{stream.mime_type}</td>
                 <td>
-                  <Button variant="primary" href={stream.url} download>
+                  <Button variant="primary" href={stream.url} onClick={() => { downloadHanlder(stream)}}>
                     Download
                   </Button>
                 </td>

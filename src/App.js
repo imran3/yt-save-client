@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { saveAs } from 'file-saver';
+
 import { DownloadOptionsTable } from './components/DownloadOptionsTable';
 import { Footer } from './components/Footer';
 import { Tutorial } from './components/Tutorial';
@@ -39,29 +41,17 @@ const App = () => {
       });
   };
 
-  const handleDownlod = (steamInfo) => {
-    console.log("Download this: ", steamInfo)
-  }
-
-  const handleDownloadVideo = async (e) => {
-    e.preventDefault();
-
-    const selectedFormat = "audio"
+  const handleDownload = async (streamInfo) => {
     try {
-      const response = await fetch(`${API_URL}/save?url=${videoUrl}&format=${selectedFormat}`);
+      const response = await fetch(`${API_URL}/save?url=${videoUrl}&itag=${streamInfo.itag}`);
       const blob = await response.blob();
-
-      const downloadUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', `video.${selectedFormat === 'video' ? 'mp4' : 'mp3'}`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const file_extension = streamInfo.type === 'video' ? `.mp4` : '.mp3'
+      const filename = `${videoInfo.title}_${streamInfo.type ?  streamInfo.resolution  : ''}${file_extension}`
+      saveAs(blob, filename);
     } catch (error) {
-      console.error(error);
+      console.error("Download failed.", error);
     }
-  };
+  }
 
   return (
     <Container>
@@ -121,7 +111,7 @@ const App = () => {
               <Card>
                 <Card.Body>
                   <h3 className="download-options-title">Download Options</h3>
-                  <DownloadOptionsTable streams={videoInfo.streams} downloadHanlder = {handleDownlod}/>
+                  <DownloadOptionsTable streams={videoInfo.streams} downloadHanlder = {handleDownload}/>
                 </Card.Body>
               </Card>
             </Col>
