@@ -1,6 +1,8 @@
 import { Button, Table } from 'react-bootstrap';
 
 const DownloadOptionsTable = ({ streams, downloadHanlder}) => {
+  if(!streams) return
+  
     const videoStreams = streams.filter((stream) => stream?.mime_type.startsWith('video'));
     const audioStreams = streams.filter((stream) => stream?.mime_type.startsWith('audio'));
   
