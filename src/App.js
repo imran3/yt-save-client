@@ -5,12 +5,13 @@ import { saveAs } from 'file-saver';
 import { DownloadOptionsTable } from './components/DownloadOptionsTable';
 import { Footer } from './components/Footer';
 import { Tutorial } from './components/Tutorial';
+const API_URL = 'https://ytsave-f5eac5b627ec.herokuapp.com'
 
 const App = () => {
-  const [videoUrl, setVideoUrl] = useState('https://www.youtube.com/watch?v=-EY97tZAkNY');
+  const [videoUrl, setVideoUrl] = useState('');
   const [videoInfo, setVideoInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const API_URL = 'https://ytsave-f5eac5b627ec.herokuapp.com'
+  
 
   const handleVideoUrlChange = (event) => {
     setVideoUrl(event.target.value);
