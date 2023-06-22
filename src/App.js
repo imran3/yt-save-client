@@ -106,7 +106,7 @@ const App = () => {
         )}
 
       {
-          videoInfo && (
+          videoInfo && videoInfo.streams &&(
           <Row className="justify-content-center mb-4">
             <Col xs={12} md={12} lg={8}>
               <Card>
